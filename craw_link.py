@@ -5,26 +5,34 @@ import time
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
-link = "https://www.tripadvisor.com/Restaurants-g293925-Ho_Chi_Minh_City.html"
+link = "https://www.tripadvisor.com.vn/Restaurants-g293925-Ho_Chi_Minh_City.html"
+link2 = "https://www.tripadvisor.com.vn/RestaurantSearch-g293925-oa30-zfp10600-Ho_Chi_Minh_City.html#EATERY_LIST_CONTENTS"
 driver.get(link)
 
 list_link = []
-links = driver.find_elements_by_class_name("bHGqj")
-# for i in links:
-#     print(i.get_attribute("href"))
-for i in range(10):
-    links = driver.find_elements_by_class_name("bHGqj")
-    for i in links:
-        link = i.get_attribute("href")
-        if link not in list_link:
-            list_link.append(link)
-    time.sleep(3)
-    btn_next = driver.find_element_by_class_name("rndBtn")
-    btn_next.click()
-    time.sleep(3)
-   
+count = 30
+for i in range(30):
+    if i ==0:
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        driver.get(link)
+        time.sleep(3)
+    else:
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        link3 = link2.replace("oa30", "oa"+str(count*i))
+        driver.get(link3)
+        time.sleep(3)
+        links = driver.find_elements_by_class_name("bHGqj")
+        time.sleep(10)
+        for lk in links:
+            href  = lk.get_attribute("href")
+            if href not in list_link:
+                list_link.append(href) 
+    driver.close()
+        
     
-    
+
 text = "\n".join(list_link)
 with open("list_link.txt", "w", encoding="utf8") as file:
     file.write(text)
+
+print(len(list_link))
